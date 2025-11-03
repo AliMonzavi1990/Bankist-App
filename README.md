@@ -3,25 +3,17 @@ Bankist is an online banking simulation built with HTML, CSS, and JavaScript. It
 [📂 Source Code](https://github.com/AliMonzavi1990/Bankist-App)
 
 🔹 Features
-User Authentication – Login system with username and PIN (e.g., js / 1111).
+Login & Logout – Secure login with PIN and automatic logout timer
 
+Account Management – View balances, deposits, and withdrawals
 
-Transaction History – View deposits and withdrawals with clear, formatted dates and sorting options.
+Transfers – Send money between accounts
 
+Account Closure – Delete an account safely
 
-Balance & Summary – Real-time calculations of total balance, income, and expenses.
+Transaction Sorting – Sort deposits and withdrawals
 
-
-Transfers & Loans – Send money between accounts and request loans with validation checks.
-
-
-Account Management – Securely close accounts after PIN confirmation.
-
-
-Data Persistence – All information is stored in localStorage, so nothing gets lost on refresh.
-
-
-Responsive Design – Built with a clean, mobile-friendly layout using CSS Grid and Flexbox.
+Persistent Data – Account movements stored using Local Storage
 
 
 
