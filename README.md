@@ -1,6 +1,6 @@
-A responsive and interactive banking application built with Vanilla JavaScript, simulating real-world banking experiences such as login, money transfers, loans, and account management.
- The project reflects my deep dive into core JavaScript concepts — from array methods and DOM manipulation to event delegation and local storage for saving user data.
- Originally inspired by Jonas Schmedtmann’s “The Complete JavaScript Course”, I later refined and expanded it to make the experience smoother and more intuitive for users.
+Bankist is an online banking simulation built with HTML, CSS, and JavaScript. It demonstrates core banking functionalities in an interactive and user-friendly interface.
+[🔗 Live Demo](https://bankist-alimo.netlify.app/)
+[📂 Source Code](https://github.com/AliMonzavi1990/Bankist-App)
 
 🔹 Features
 User Authentication – Login system with username and PIN (e.g., js / 1111).
