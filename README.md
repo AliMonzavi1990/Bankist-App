@@ -34,9 +34,6 @@ Frontend: JavaScript (ES6+), HTML5, CSS3
 🚀 How to Run
 Clone the repository:
 
- git clone https://github.com/yourusername/bankist-app.git
-
-
 Open index.html in a browser (or use Live Server in VS Code).
 
 
