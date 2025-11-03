@@ -35,6 +35,25 @@ const account4 = {
 
 const accounts = [account1, account2, account3, account4];
 
+// ------------------- Load from Local Storage -------------------
+const accountsFromStorage = JSON.parse(localStorage.getItem('accounts'));
+if (accountsFromStorage) {
+  accountsFromStorage.forEach(acc => {
+    acc.username = acc.owner
+      .toLowerCase()
+      .split(' ')
+      .map(name => name[0])
+      .join('');
+  });
+  accounts.length = 0;
+  accounts.push(...accountsFromStorage);
+}
+
+// Function to save accounts
+const saveAccountsToLocalStorage = function () {
+  localStorage.setItem('accounts', JSON.stringify(accounts));
+};
+
 // Elements
 const labelWelcome = document.querySelector('.welcome');
 const labelDate = document.querySelector('.date');
@@ -61,6 +80,7 @@ const inputLoanAmount = document.querySelector('.form__input--loan-amount');
 const inputCloseUsername = document.querySelector('.form__input--user');
 const inputClosePin = document.querySelector('.form__input--pin');
 
+// Functions
 const displayMovments = function (movements, sort = false) {
   containerMovements.innerHTML = '';
   const movs = sort ? movements.slice().sort((a, b) => a - b) : movements;
@@ -68,10 +88,10 @@ const displayMovments = function (movements, sort = false) {
     const type = mov > 0 ? 'deposit' : 'withdrawal';
     const html = `
       <div class="movements__row">
-        <div class="movements__type movements__type--${type}">${
-      i + 1
-    } ${type}</div>
-        <div class="movements__value">${mov}\u20AC</div>
+        <div class="movements__type movements__type--${type}">
+          ${i + 1} ${type}
+        </div>
+        <div class="movements__value">${mov}€</div>
       </div>
     `;
     containerMovements.insertAdjacentHTML('afterbegin', html);
@@ -80,26 +100,26 @@ const displayMovments = function (movements, sort = false) {
 
 const calcDisplayBalance = function (acc) {
   acc.balance = acc.movements.reduce((sum, mov) => sum + mov, 0);
-  labelBalance.textContent = `${acc.balance} \u20AC`;
+  labelBalance.textContent = `${acc.balance} €`;
 };
 
 const calcDisplaySummary = function (acc) {
   const incomes = acc.movements
     .filter(mov => mov > 0)
     .reduce((acc, mov) => acc + mov, 0);
-  labelSumIn.textContent = `${incomes}\u20AC`;
+  labelSumIn.textContent = `${incomes} €`;
 
   const out = acc.movements
     .filter(mov => mov < 0)
     .reduce((acc, mov) => acc + mov, 0);
-  labelSumOut.textContent = `${Math.abs(out)}\u20AC`;
+  labelSumOut.textContent = `${Math.abs(out)} €`;
 
   const interest = acc.movements
     .filter(mov => mov > 0)
     .map(deposit => (deposit * acc.interestRate) / 100)
     .filter(int => int >= 1)
     .reduce((acc, int) => acc + int, 0);
-  labelSumInterest.textContent = `${interest}\u20AC`;
+  labelSumInterest.textContent = `${interest} €`;
 };
 
 const createUsername = function (accs) {
@@ -111,42 +131,65 @@ const createUsername = function (accs) {
       .join('');
   });
 };
-
 createUsername(accounts);
 
 const updateUI = function (acc) {
   displayMovments(acc.movements);
-  //Display balance
   calcDisplayBalance(acc);
-  // Display summary
   calcDisplaySummary(acc);
 };
 
+//  Timer
+let timer;
+const startLogOutTimer = function () {
+  let time = 300;
+
+  const tick = function () {
+    const min = String(Math.trunc(time / 60)).padStart(2, '0');
+    const sec = String(time % 60).padStart(2, '0');
+    labelTimer.textContent = `${min}:${sec}`;
+
+    if (time === 0) {
+      clearInterval(timer);
+      labelWelcome.textContent = 'Log in to get started';
+      containerApp.style.opacity = 0;
+    }
+
+    time--;
+  };
+
+  tick();
+  timer = setInterval(tick, 1000);
+  return timer;
+};
+
+// App Logic
 let currentAccount;
 
+// Login
 btnLogin.addEventListener('click', function (e) {
-  //Prevent from submiting
   e.preventDefault();
 
   currentAccount = accounts.find(
     acc => acc.username === inputLoginUsername.value
   );
-  console.log(currentAccount);
+
   if (currentAccount?.pin === Number(inputLoginPin.value)) {
-    // Display UI and message
     labelWelcome.textContent = `Welcome back, ${
       currentAccount.owner.split(' ')[0]
     }`;
     containerApp.style.opacity = 100;
-    //clear the input fields
     inputLoginPin.value = inputLoginUsername.value = '';
-    //eliminate the blinking line
     inputLoginPin.blur();
-    // Display movements
+
     updateUI(currentAccount);
+
+    if (timer) clearInterval(timer);
+    timer = startLogOutTimer();
   }
 });
 
+// Transfer
 btnTransfer.addEventListener('click', function (e) {
   e.preventDefault();
   const amount = Number(inputTransferAmount.value);
@@ -163,9 +206,15 @@ btnTransfer.addEventListener('click', function (e) {
     currentAccount.movements.push(-amount);
     receiverAcc.movements.push(amount);
     updateUI(currentAccount);
+
+    saveAccountsToLocalStorage();
+
+    clearInterval(timer);
+    timer = startLogOutTimer();
   }
 });
 
+// Close account
 btnClose.addEventListener('click', function (e) {
   e.preventDefault();
   if (
@@ -177,11 +226,14 @@ btnClose.addEventListener('click', function (e) {
     );
     accounts.splice(index, 1);
     containerApp.style.opacity = 0;
+    clearInterval(timer);
+
+    saveAccountsToLocalStorage();
   }
 });
 
+// Sort
 let sorted = false;
-
 btnSort.addEventListener('click', function (e) {
   e.preventDefault();
   displayMovments(currentAccount.movements, !sorted);
