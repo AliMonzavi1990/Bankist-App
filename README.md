@@ -38,13 +38,6 @@ Try sending a transfer or requesting a loan — all data will stay saved thanks 
 
 ---
 
-## What I Learned
-Working on this project helped me connect abstract JavaScript concepts to real-world logic.  
-I learned how to structure applications, manage user interactions, handle data efficiently, and think about both functionality and user experience at the same time.  
-It was also a reminder of how small details — like clean date formatting or intuitive buttons — can completely change the way a web app feels to use.  
-
----
-
 ## Credits
 Original concept by Jonas Schmedtmann (2024).  
 Extended and refined by Aliakbar Monzavi Sofyani (2024).  
